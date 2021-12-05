@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "999020402103",
-    "project_id": "mad-inclass08-fce81",
-    "storage_bucket": "mad-inclass08-fce81.appspot.com"
+    "project_number": "857228568252",
+    "project_id": "hw07-maproutejogging",
+    "storage_bucket": "hw07-maproutejogging.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:999020402103:android:11551f3ab6235118fc8432",
+        "mobilesdk_app_id": "1:857228568252:android:44b0ea95d6bda98cef52b9",
         "android_client_info": {
-          "package_name": "com.example.inclass08_forumfirebase"
+          "package_name": "com.example.HW07_forumfirebase"
         }
       },
       "oauth_client": [
         {
-          "client_id": "999020402103-tj3q4eidi6eg6rnvsfg6mr97valn2nlm.apps.googleusercontent.com",
+          "client_id": "857228568252-n606jgsfgvmkcu0uk7p82g6ijc38vcub.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAlkCJggBmC9a5Z6fJgOhJla8mV2EPDtyg"
+          "current_key": "AIzaSyDVdmIXKANwhTLYUR9qqqeV3ORBqfVahgc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "999020402103-tj3q4eidi6eg6rnvsfg6mr97valn2nlm.apps.googleusercontent.com",
+              "client_id": "857228568252-n606jgsfgvmkcu0uk7p82g6ijc38vcub.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
