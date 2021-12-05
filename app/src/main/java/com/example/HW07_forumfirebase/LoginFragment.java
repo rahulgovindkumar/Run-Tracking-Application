@@ -10,6 +10,7 @@ package com.example.HW07_forumfirebase;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -72,7 +73,7 @@ public class LoginFragment extends Fragment {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
                                         getParentFragmentManager().beginTransaction()
-                                                .replace(R.id.main_ContainerView, new ForumsFragment())
+                                                .replace(R.id.main_ContainerView, new HistoryFragment())
                                                 .commit();
                                     } else {
                                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
