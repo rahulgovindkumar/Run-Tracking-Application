@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.HW07_forumfirebase.databinding.ActivityMapsBinding;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -56,15 +57,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
-           if(locationResult==null){
-               return;
-           }
+            if(locationResult==null){
+                return;
+            }
             Log.d(TAG, "onLocationResult: Before");
-           for(Location location: locationResult.getLocations()){
-               Log.d(TAG, "onLocationResult: "+ location.toString());
-               Log.d(TAG, "onLocationResult:getLongitude "+ location.getLongitude());
-               Log.d(TAG, "onLocationResult:getLatitude "+ location.getLatitude());
-           }
+            for(Location location: locationResult.getLocations()){
+                Log.d(TAG, "onLocationResult: "+ location.toString());
+                Log.d(TAG, "onLocationResult:getLongitude "+ location.getLongitude());
+                Log.d(TAG, "onLocationResult:getLatitude "+ location.getLatitude());
+            }
 
         }
     };
@@ -83,7 +84,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         if(getIntent() != null && getIntent().getExtras() != null & getIntent().hasExtra(HistoryFragment.intentKey)) {
-            trip = getIntent().getParcelableArrayListExtra(HistoryFragment.intentKey);
+            trip = (ArrayList<ParcelableGeoPoint>) getIntent().getParcelableExtra(HistoryFragment.intentKey);
         }
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -91,8 +92,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationRequest.setInterval(4000);
         locationRequest.setFastestInterval(2000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        Log.d(TAG, "onCreate: ");
     }
 
     /**
@@ -108,30 +107,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        Log.d(TAG, "onMapReady: ");
+        ArrayList<LatLng> coorList = new ArrayList<>();
 
-        double camLatmin = trip.get(0).getGeoPoint().getLatitude();
-        double camLatmax = trip.get(0).getGeoPoint().getLatitude();
-        double camLongmin = trip.get(0).getGeoPoint().getLongitude();
-        double camLongmax = trip.get(0).getGeoPoint().getLongitude();
+        ParcelableGeoPoint start = trip.get(0), end = trip.get(trip.size() - 1);
+
+        double camLatmin = start.getGeoPoint().getLatitude();
+        double camLatmax = start.getGeoPoint().getLatitude();
+        double camLongmin = start.getGeoPoint().getLongitude();
+        double camLongmax = start.getGeoPoint().getLongitude();
 
         for (ParcelableGeoPoint p: trip) {
-            mMap.addPolyline(new PolylineOptions()
-                    .clickable(true)
-                    .add(new LatLng(p.getGeoPoint().getLatitude(), p.getGeoPoint().getLongitude())));
+            coorList.add(new LatLng(p.getGeoPoint().getLatitude(), p.getGeoPoint().getLongitude()));
             camLatmin = p.getGeoPoint().getLatitude() < camLatmin ? p.getGeoPoint().getLatitude() : camLatmin;
             camLongmin = p.getGeoPoint().getLongitude() < camLongmin ? p.getGeoPoint().getLongitude() : camLongmin;
             camLongmax = p.getGeoPoint().getLongitude() > camLongmax ? p.getGeoPoint().getLongitude() : camLongmax;
             camLatmax = p.getGeoPoint().getLatitude() > camLatmax ? p.getGeoPoint().getLatitude() : camLatmax;
         }
 
+        Polyline polyline = mMap.addPolyline(new PolylineOptions()
+                .clickable(true)
+                .addAll(coorList));
 
+        mMap.addMarker(new MarkerOptions().position(new LatLng(start.getGeoPoint().getLatitude(), start.getGeoPoint().getLongitude())).title("Start"));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(end.getGeoPoint().getLatitude(), end.getGeoPoint().getLongitude())).title("End"));
 
-        LatLngBounds australiaBounds = new LatLngBounds(
+        LatLngBounds latLngBounds = new LatLngBounds(
                 new LatLng(camLatmin, camLongmin), // SW bounds
                 new LatLng(camLatmax, camLongmax)  // NE bounds
         );
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(australiaBounds, 0));
+        Log.d(TAG, "onMapReady: " + camLatmax + " " + camLatmin + " " + camLongmax + " " + camLongmin);
+
+        mMap.setLatLngBoundsForCameraTarget(latLngBounds);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((camLatmin + ((camLatmax-camLatmin)/2)), (camLongmin+((camLongmax-camLongmin)/2))), 10));
     }
 
     @Override
@@ -241,7 +248,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
-        
+
 
     }
 
@@ -267,7 +274,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (requestCode == LOCATION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //Permission Granted
-               // getLastLocation();
+                // getLastLocation();
                 checkSettingAndStartLocationUpdates();
             } else {
                 //Permission Not granted
