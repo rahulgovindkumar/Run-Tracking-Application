@@ -80,7 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         if(getIntent() != null && getIntent().getExtras() != null & getIntent().hasExtra(HistoryFragment.intentKey)) {
-            trip = (POJOclasses.Route) getIntent().getSerializableExtra(HistoryFragment.intentKey);
+            trip = (POJOclasses.Route) getIntent().getParcelableExtra(HistoryFragment.intentKey);
         }
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
