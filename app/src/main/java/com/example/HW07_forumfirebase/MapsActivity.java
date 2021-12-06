@@ -107,38 +107,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        ArrayList<LatLng> coorList = new ArrayList<>();
+        if (trip != null) {
 
-        ParcelableGeoPoint start = trip.get(0), end = trip.get(trip.size() - 1);
+            ArrayList<LatLng> coorList = new ArrayList<>();
 
-        double camLatmin = start.getGeoPoint().getLatitude();
-        double camLatmax = start.getGeoPoint().getLatitude();
-        double camLongmin = start.getGeoPoint().getLongitude();
-        double camLongmax = start.getGeoPoint().getLongitude();
+            ParcelableGeoPoint start = trip.get(0), end = trip.get(trip.size() - 1);
 
-        for (ParcelableGeoPoint p: trip) {
-            coorList.add(new LatLng(p.getGeoPoint().getLatitude(), p.getGeoPoint().getLongitude()));
-            camLatmin = p.getGeoPoint().getLatitude() < camLatmin ? p.getGeoPoint().getLatitude() : camLatmin;
-            camLongmin = p.getGeoPoint().getLongitude() < camLongmin ? p.getGeoPoint().getLongitude() : camLongmin;
-            camLongmax = p.getGeoPoint().getLongitude() > camLongmax ? p.getGeoPoint().getLongitude() : camLongmax;
-            camLatmax = p.getGeoPoint().getLatitude() > camLatmax ? p.getGeoPoint().getLatitude() : camLatmax;
+            double camLatmin = start.getGeoPoint().getLatitude();
+            double camLatmax = start.getGeoPoint().getLatitude();
+            double camLongmin = start.getGeoPoint().getLongitude();
+            double camLongmax = start.getGeoPoint().getLongitude();
+
+            for (ParcelableGeoPoint p : trip) {
+                coorList.add(new LatLng(p.getGeoPoint().getLatitude(), p.getGeoPoint().getLongitude()));
+                camLatmin = p.getGeoPoint().getLatitude() < camLatmin ? p.getGeoPoint().getLatitude() : camLatmin;
+                camLongmin = p.getGeoPoint().getLongitude() < camLongmin ? p.getGeoPoint().getLongitude() : camLongmin;
+                camLongmax = p.getGeoPoint().getLongitude() > camLongmax ? p.getGeoPoint().getLongitude() : camLongmax;
+                camLatmax = p.getGeoPoint().getLatitude() > camLatmax ? p.getGeoPoint().getLatitude() : camLatmax;
+            }
+
+            Polyline polyline = mMap.addPolyline(new PolylineOptions()
+                    .clickable(true)
+                    .addAll(coorList));
+
+            mMap.addMarker(new MarkerOptions().position(new LatLng(start.getGeoPoint().getLatitude(), start.getGeoPoint().getLongitude())).title("Start"));
+            mMap.addMarker(new MarkerOptions().position(new LatLng(end.getGeoPoint().getLatitude(), end.getGeoPoint().getLongitude())).title("End"));
+
+            LatLngBounds latLngBounds = new LatLngBounds(
+                    new LatLng(camLatmin, camLongmin), // SW bounds
+                    new LatLng(camLatmax, camLongmax)  // NE bounds
+            );
+            Log.d(TAG, "onMapReady: " + camLatmax + " " + camLatmin + " " + camLongmax + " " + camLongmin);
+
+            mMap.setLatLngBoundsForCameraTarget(latLngBounds);
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((camLatmin + ((camLatmax-camLatmin)/2)), (camLongmin+((camLongmax-camLongmin)/2))), 10));
+            int width = getResources().getDisplayMetrics().widthPixels;
+            int height = getResources().getDisplayMetrics().heightPixels;
+            int padding = (int) (width * 0.10);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, width, height, padding));
         }
-
-        Polyline polyline = mMap.addPolyline(new PolylineOptions()
-                .clickable(true)
-                .addAll(coorList));
-
-        mMap.addMarker(new MarkerOptions().position(new LatLng(start.getGeoPoint().getLatitude(), start.getGeoPoint().getLongitude())).title("Start"));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(end.getGeoPoint().getLatitude(), end.getGeoPoint().getLongitude())).title("End"));
-
-        LatLngBounds latLngBounds = new LatLngBounds(
-                new LatLng(camLatmin, camLongmin), // SW bounds
-                new LatLng(camLatmax, camLongmax)  // NE bounds
-        );
-        Log.d(TAG, "onMapReady: " + camLatmax + " " + camLatmin + " " + camLongmax + " " + camLongmin);
-
-        mMap.setLatLngBoundsForCameraTarget(latLngBounds);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((camLatmin + ((camLatmax-camLatmin)/2)), (camLongmin+((camLongmax-camLongmin)/2))), 11));
     }
 
     @Override
