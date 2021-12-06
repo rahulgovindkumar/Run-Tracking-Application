@@ -7,9 +7,6 @@
 
 package com.example.HW07_forumfirebase;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.firebase.firestore.GeoPoint;
 
 import java.io.Serializable;
@@ -90,7 +87,7 @@ public class POJOclasses {
         }
     }
 
-    public static class Route implements Parcelable {
+    public static class Route {
         ArrayList<GeoPoint> points;
         String dateTime;
 
@@ -98,22 +95,6 @@ public class POJOclasses {
             this.points = points;
             this.dateTime = dateTime;
         }
-
-        protected Route(Parcel in) {
-            dateTime = in.readString();
-        }
-
-        public static final Creator<Route> CREATOR = new Creator<Route>() {
-            @Override
-            public Route createFromParcel(Parcel in) {
-                return new Route(in);
-            }
-
-            @Override
-            public Route[] newArray(int size) {
-                return new Route[size];
-            }
-        };
 
         public ArrayList<GeoPoint> getPoints() {
             return points;
@@ -134,16 +115,6 @@ public class POJOclasses {
         @Override
         public String toString() {
             return dateTime;
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel parcel, int i) {
-            parcel.writeArray(new ArrayList[]{this.points});
         }
     }
 }

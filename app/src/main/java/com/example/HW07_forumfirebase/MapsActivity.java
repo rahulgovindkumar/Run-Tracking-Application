@@ -37,11 +37,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.util.ArrayList;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-    POJOclasses.Route trip;
+    ArrayList<GeoPoint> trip;
 
     final String TAG = "Demo";
 
@@ -80,7 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         if(getIntent() != null && getIntent().getExtras() != null & getIntent().hasExtra(HistoryFragment.intentKey)) {
-            trip = (POJOclasses.Route) getIntent().getParcelableExtra(HistoryFragment.intentKey);
+            trip = (ArrayList<GeoPoint>) getIntent().getParcelableExtra(HistoryFragment.intentKey);
         }
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -103,12 +105,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        double camLatmin = trip.points.get(0).getLatitude();
-        double camLatmax = trip.points.get(0).getLatitude();
-        double camLongmin = trip.points.get(0).getLongitude();
-        double camLongmax = trip.points.get(0).getLongitude();
+        double camLatmin = trip.get(0).getLatitude();
+        double camLatmax = trip.get(0).getLatitude();
+        double camLongmin = trip.get(0).getLongitude();
+        double camLongmax = trip.get(0).getLongitude();
 
-        for (GeoPoint p: trip.points) {
+        for (GeoPoint p: trip) {
             mMap.addPolyline(new PolylineOptions()
                     .clickable(true)
                     .add(new LatLng(p.getLatitude(), p.getLongitude())));

@@ -53,7 +53,7 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getActivity(), MapsActivity.class);
-                intent.putExtra(HistoryFragment.intentKey, previousJogs.get(i));
+                intent.putExtra(HistoryFragment.intentKey, previousJogs.get(i).getPoints());
                 startActivity(intent);
             }
         });
