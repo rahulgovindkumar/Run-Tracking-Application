@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -43,7 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-    ArrayList<GeoPoint> trip;
+    ArrayList<ParcelableGeoPoint> trip;
 
     final String TAG = "Demo";
 
@@ -82,7 +83,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         if(getIntent() != null && getIntent().getExtras() != null & getIntent().hasExtra(HistoryFragment.intentKey)) {
-            trip = (ArrayList<GeoPoint>) getIntent().getParcelableExtra(HistoryFragment.intentKey);
+            trip = (ArrayList<ParcelableGeoPoint>) getIntent().getParcelableExtra(HistoryFragment.intentKey);
         }
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -105,19 +106,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        double camLatmin = trip.get(0).getLatitude();
-        double camLatmax = trip.get(0).getLatitude();
-        double camLongmin = trip.get(0).getLongitude();
-        double camLongmax = trip.get(0).getLongitude();
+        double camLatmin = trip.get(0).getGeoPoint().getLatitude();
+        double camLatmax = trip.get(0).getGeoPoint().getLatitude();
+        double camLongmin = trip.get(0).getGeoPoint().getLongitude();
+        double camLongmax = trip.get(0).getGeoPoint().getLongitude();
 
-        for (GeoPoint p: trip) {
+        for (ParcelableGeoPoint p: trip) {
             mMap.addPolyline(new PolylineOptions()
                     .clickable(true)
-                    .add(new LatLng(p.getLatitude(), p.getLongitude())));
-            camLatmin = p.getLatitude() < camLatmin ? p.getLatitude() : camLatmin;
-            camLongmin = p.getLongitude() < camLongmin ? p.getLongitude() : camLongmin;
-            camLongmax = p.getLongitude() > camLongmax ? p.getLongitude() : camLongmax;
-            camLatmax = p.getLatitude() > camLatmax ? p.getLatitude() : camLatmax;
+                    .add(new LatLng(p.getGeoPoint().getLatitude(), p.getGeoPoint().getLongitude())));
+            camLatmin = p.getGeoPoint().getLatitude() < camLatmin ? p.getGeoPoint().getLatitude() : camLatmin;
+            camLongmin = p.getGeoPoint().getLongitude() < camLongmin ? p.getGeoPoint().getLongitude() : camLongmin;
+            camLongmax = p.getGeoPoint().getLongitude() > camLongmax ? p.getGeoPoint().getLongitude() : camLongmax;
+            camLatmax = p.getGeoPoint().getLatitude() > camLatmax ? p.getGeoPoint().getLatitude() : camLatmax;
         }
 
 

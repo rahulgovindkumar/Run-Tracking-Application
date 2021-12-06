@@ -53,7 +53,11 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getActivity(), MapsActivity.class);
-                intent.putExtra(HistoryFragment.intentKey, previousJogs.get(i).getPoints());
+                ArrayList<ParcelableGeoPoint> pointsExtra = new ArrayList<ParcelableGeoPoint>();
+                for(GeoPoint point: previousJogs.get(i).getPoints()) {
+                    pointsExtra.add(new ParcelableGeoPoint(point));
+                }
+                intent.putExtra(HistoryFragment.intentKey, pointsExtra);
                 startActivity(intent);
             }
         });
