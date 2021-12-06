@@ -37,6 +37,7 @@ public class HistoryFragment extends Fragment {
     ListView listView;
     ArrayAdapter<POJOclasses.Route> adapter;
     ArrayList<POJOclasses.Route> previousJogs = new ArrayList<>();
+    final static String intentKey = "Route";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,7 +53,7 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getActivity(), MapsActivity.class);
-                intent.putExtra("route", previousJogs.get(i));
+                intent.putExtra(HistoryFragment.intentKey, previousJogs.get(i));
                 startActivity(intent);
             }
         });

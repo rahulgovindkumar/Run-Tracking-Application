@@ -28,9 +28,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        Intent intent = new Intent(this, MapsActivity.class);
-
-        startActivity(intent);
+//        Intent intent = new Intent(this, MapsActivity.class);
+//
+//        startActivity(intent);
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             getSupportFragmentManager().beginTransaction()
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         } else {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.main_ContainerView, new ForumsFragment())
+                    .add(R.id.main_ContainerView, new HistoryFragment())
                     .commit();
         }
     }

@@ -75,12 +75,6 @@ public class RegisterFragment extends Fragment {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
 
-//                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-//                                                .setDisplayName(name)
-//                                                .build();
-//                                        user.updateProfile(profileUpdates);
-
                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
                                         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -95,17 +89,13 @@ public class RegisterFragment extends Fragment {
                                                         if (task.isSuccessful()) {
                                                             Log.d(TAG, "User profile updated.");
                                                             getParentFragmentManager().beginTransaction()
-                                                                    .replace(R.id.main_ContainerView, new ForumsFragment())
+                                                                    .replace(R.id.main_ContainerView, new HistoryFragment())
                                                                     .commit();
                                                         } else {
                                                             Log.d(TAG, "onComplete: Task failed");
                                                         }
                                                     }
                                                 });
-
-//                                        getParentFragmentManager().beginTransaction()
-//                                                .replace(R.id.main_ContainerView, new ForumsFragment())
-//                                                .commit();
                                     } else {
                                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                         builder.setTitle("Login error!")

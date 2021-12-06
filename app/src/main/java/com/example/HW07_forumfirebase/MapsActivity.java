@@ -28,16 +28,20 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.HW07_forumfirebase.databinding.ActivityMapsBinding;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.GeoPoint;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
+    POJOclasses.Route trip;
 
     final String TAG = "Demo";
 
@@ -75,17 +79,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        if(getIntent() != null && getIntent().getExtras() != null & getIntent().hasExtra(HistoryFragment.intentKey)) {
+            trip = (POJOclasses.Route) getIntent().getSerializableExtra(HistoryFragment.intentKey);
+        }
+
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         locationRequest = LocationRequest.create();
         locationRequest.setInterval(4000);
         locationRequest.setFastestInterval(2000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-
-
-
-
-
     }
 
     /**
@@ -101,10 +103,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        double camLatmin = trip.points.get(0).getLatitude();
+        double camLatmax = trip.points.get(0).getLatitude();
+        double camLongmin = trip.points.get(0).getLongitude();
+        double camLongmax = trip.points.get(0).getLongitude();
+
+        for (GeoPoint p: trip.points) {
+            mMap.addPolyline(new PolylineOptions()
+                    .clickable(true)
+                    .add(new LatLng(p.getLatitude(), p.getLongitude())));
+            camLatmin = p.getLatitude() < camLatmin ? p.getLatitude() : camLatmin;
+            camLongmin = p.getLongitude() < camLongmin ? p.getLongitude() : camLongmin;
+            camLongmax = p.getLongitude() > camLongmax ? p.getLongitude() : camLongmax;
+            camLatmax = p.getLatitude() > camLatmax ? p.getLatitude() : camLatmax;
+        }
+
+
+
+        LatLngBounds australiaBounds = new LatLngBounds(
+                new LatLng(camLatmin, camLongmin), // SW bounds
+                new LatLng(camLatmax, camLongmax)  // NE bounds
+        );
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(australiaBounds, 0));
     }
 
     @Override
