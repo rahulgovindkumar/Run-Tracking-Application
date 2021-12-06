@@ -138,7 +138,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG, "onMapReady: " + camLatmax + " " + camLatmin + " " + camLongmax + " " + camLongmin);
 
         mMap.setLatLngBoundsForCameraTarget(latLngBounds);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((camLatmin + ((camLatmax-camLatmin)/2)), (camLongmin+((camLongmax-camLongmin)/2))), 10));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((camLatmin + ((camLatmax-camLatmin)/2)), (camLongmin+((camLongmax-camLongmin)/2))), 10));
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+        int padding = (int) (width * 0.10);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, width, height, padding));
     }
 
     @Override
