@@ -83,7 +83,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         if(getIntent() != null && getIntent().getExtras() != null & getIntent().hasExtra(HistoryFragment.intentKey)) {
-            trip = (ArrayList<ParcelableGeoPoint>) getIntent().getParcelableExtra(HistoryFragment.intentKey);
+            trip = getIntent().getParcelableArrayListExtra(HistoryFragment.intentKey);
         }
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -91,6 +91,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationRequest.setInterval(4000);
         locationRequest.setFastestInterval(2000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        Log.d(TAG, "onCreate: ");
     }
 
     /**
@@ -105,6 +107,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        Log.d(TAG, "onMapReady: ");
 
         double camLatmin = trip.get(0).getGeoPoint().getLatitude();
         double camLatmax = trip.get(0).getGeoPoint().getLatitude();
