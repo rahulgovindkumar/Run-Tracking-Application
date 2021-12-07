@@ -76,6 +76,14 @@ public class HistoryFragment extends Fragment {
                     }
                 });
 
+        binding.buttonNewJog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), MapsActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return binding.getRoot();
     }
 }

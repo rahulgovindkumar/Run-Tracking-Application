@@ -9,6 +9,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
@@ -24,6 +25,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -45,7 +47,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-    ArrayList<ParcelableGeoPoint> trip;
+    ArrayList<ParcelableGeoPoint> trip, newRun;
+    double newRunLatMin, newRunLatMax, newRunLonMin, newRunLonMax;
+    LatLng prev;
+
 
     final String TAG = "Demo";
 
@@ -62,11 +67,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             Log.d(TAG, "onLocationResult: Before");
             for(Location location: locationResult.getLocations()){
+                if(newRunLatMin == 0) {
+                    newRunLatMin = newRunLatMax = location.getLatitude();
+                    newRunLonMin = newRunLonMax = location.getLongitude();
+                    prev = new LatLng(location.getLatitude(), location.getLongitude());
+                } else {
+                    newRunLatMin = location.getLatitude() < newRunLatMin ? location.getLatitude() : newRunLatMin;
+                    newRunLonMin = location.getLongitude() < newRunLonMin ? location.getLongitude() : newRunLonMin;
+                    newRunLonMax = location.getLongitude() > newRunLonMax ? location.getLongitude() : newRunLonMax;
+                    newRunLatMax = location.getLatitude() > newRunLatMax ? location.getLatitude() : newRunLatMax;
+                    LatLng current = new LatLng(location.getLatitude(), location.getLongitude());
+                    CameraUpdate update = CameraUpdateFactory.newLatLngZoom(current, 16);
+                    mMap.animateCamera(update);
+                    mMap.addPolyline((new PolylineOptions())
+                            .add(prev, current).width(6).color(Color.BLUE)
+                            .visible(true));
+                    prev=current;
+                    newRun.add(new ParcelableGeoPoint(new GeoPoint(location.getLatitude(), location.getLongitude())));
+                }
                 Log.d(TAG, "onLocationResult: "+ location.toString());
                 Log.d(TAG, "onLocationResult:getLongitude "+ location.getLongitude());
                 Log.d(TAG, "onLocationResult:getLatitude "+ location.getLatitude());
             }
 
+//            LatLngBounds latLngBounds = new LatLngBounds(
+//                    new LatLng(newRunLatMin, newRunLonMin), // SW bounds
+//                    new LatLng(newRunLatMax, newRunLonMax)  // NE bounds
+//            );
+//
+//            mMap.setLatLngBoundsForCameraTarget(latLngBounds);
+//            int width = getResources().getDisplayMetrics().widthPixels;
+//            int height = getResources().getDisplayMetrics().heightPixels;
+//            int padding = (int) (width * 0.10);
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, width, height, padding));
         }
     };
 
@@ -85,6 +118,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if(getIntent() != null && getIntent().getExtras() != null & getIntent().hasExtra(HistoryFragment.intentKey)) {
             trip = getIntent().getParcelableArrayListExtra(HistoryFragment.intentKey);
+        } else {
+            trip = null;
+            newRun = new ArrayList<>();
         }
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -94,15 +130,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -140,7 +167,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d(TAG, "onMapReady: " + camLatmax + " " + camLatmin + " " + camLongmax + " " + camLongmin);
 
             mMap.setLatLngBoundsForCameraTarget(latLngBounds);
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((camLatmin + ((camLatmax-camLatmin)/2)), (camLongmin+((camLongmax-camLongmin)/2))), 10));
             int width = getResources().getDisplayMetrics().widthPixels;
             int height = getResources().getDisplayMetrics().heightPixels;
             int padding = (int) (width * 0.10);
@@ -183,9 +209,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //Settings of device satisfied and start location update
 
                 startLocationUpdates();
-
-
-
             }
         });
 
@@ -204,29 +227,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-
-
-
     }
 
     @SuppressLint("MissingPermission")
     private void startLocationUpdates(){
-
         fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.getMainLooper());
-
-
     }
 
     private void stopLocationUpdates(){
-
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-
-
     }
 
-
     private void getLastLocation() {
-
 
         @SuppressLint("MissingPermission") Task<Location> locationTask = fusedLocationProviderClient.getLastLocation();
 
@@ -238,6 +250,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.d(TAG, "onSuccess: "+location.toString());
                     Log.d(TAG, "onSuccess: "+location.getLatitude());
                     Log.d(TAG, "onSuccess: "+location.getLongitude());
+                    newRun.add(new ParcelableGeoPoint(new GeoPoint(location.getLatitude(), location.getLongitude())));
                 }else
                 {
                     Log.d(TAG, "onSuccess: Location is NULL ");
@@ -253,14 +266,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-
-
-
-
     }
 
     private void  askLocationPermission(){
-
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
             if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_FINE_LOCATION)){
                 Log.d(TAG, "askLocationPermission: ");
@@ -282,7 +290,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //Permission Granted
                 // getLastLocation();
-                checkSettingAndStartLocationUpdates();
+                if(trip == null) {
+                    checkSettingAndStartLocationUpdates();
+                }
             } else {
                 //Permission Not granted
             }
