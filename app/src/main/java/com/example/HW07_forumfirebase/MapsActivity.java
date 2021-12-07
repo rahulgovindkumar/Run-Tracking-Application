@@ -113,9 +113,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if(getIntent() != null && getIntent().getExtras() != null & getIntent().hasExtra(HistoryFragment.intentKey)) {
             trip = getIntent().getParcelableArrayListExtra(HistoryFragment.intentKey);
+            binding.buttonEndJog.setVisibility(View.INVISIBLE);
         } else {
             trip = null;
             newRun = new ArrayList<>();
+            binding.buttonEndJog.setVisibility(View.VISIBLE);
+            binding.buttonEndJog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String uid = mAuth.getCurrentUser().getUid();
+
+                    HashMap<String, Object> newRunData = new HashMap<>();
+                    newRunData.put("points", newRun);
+
+                    db.collection(uid).document(String.valueOf(java.util.Calendar.getInstance().getTime()))
+                            .set(newRunData, SetOptions.merge());
+                    finish();
+                }
+            });
         }
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -123,20 +138,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationRequest.setInterval(4000);
         locationRequest.setFastestInterval(2000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        binding.buttonEndJog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String uid = mAuth.getCurrentUser().getUid();
-
-                HashMap<String, Object> newRunData = new HashMap<>();
-                newRunData.put("points", newRun);
-
-                db.collection(uid).document(String.valueOf(java.util.Calendar.getInstance().getTime()))
-                        .set(newRunData, SetOptions.merge());
-                finish();
-            }
-        });
     }
 
     @Override

@@ -84,6 +84,16 @@ public class HistoryFragment extends Fragment {
             }
         });
 
+        binding.buttonLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAuth.signOut();
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.main_ContainerView, new LoginFragment())
+                        .commit();
+            }
+        });
+
         return binding.getRoot();
     }
 }
