@@ -23,5 +23,11 @@
     <string name="login">Login</string>
     <string name="create_new_account">Create New Account</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="new_jog">New Jog</string>
+    <string name="previous_jog_history">Previous Jog History</string>
+
+    <string name="end_jog">End Jog</string>
+    <string name="JogHistoryRuns">Jog History Runs</string>
+    <string name="JogTracking">Jog Tracking</string>
 
 </resources>

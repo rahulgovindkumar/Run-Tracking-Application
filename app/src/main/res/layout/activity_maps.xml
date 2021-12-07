@@ -24,7 +24,7 @@
         android:layout_marginBottom="65dp"
         android:background="#359c5e"
         android:padding="8dp"
-        android:text="End Jog"
+        android:text="@string/end_jog"
         android:textColor="#ffffff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,3 +1,10 @@
+/*HW07
+        Grouping3 - 18
+        Name: Rahul Govindkumar
+        Name: Amruth Nag
+        */
+
+
 package com.example.HW07_forumfirebase;
 
 import android.content.Intent;
@@ -95,5 +102,13 @@ public class HistoryFragment extends Fragment {
         });
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getActivity().setTitle(getString(R.string.JogHistoryRuns));
+
     }
 }

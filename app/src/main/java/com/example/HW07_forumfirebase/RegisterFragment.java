@@ -1,9 +1,8 @@
-/*InClass 08
+/*HW07
         Grouping3 - 18
         Name: Rahul Govindkumar
         Name: Amruth Nag
         */
-
 
 package com.example.HW07_forumfirebase;
 

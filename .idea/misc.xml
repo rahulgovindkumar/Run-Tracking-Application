@@ -5,7 +5,11 @@
       <map>
         <entry key="..\:/UNCC/COURSE/Mobile Application Development/HW07/HW07_group18/HW07_group18/app/src/main/res/layout/activity_main.xml" value="0.1296875" />
         <entry key="..\:/UNCC/COURSE/Mobile Application Development/HW07/HW07_group18/HW07_group18/app/src/main/res/layout/activity_maps.xml" value="0.2" />
+        <entry key="..\:/UNCC/COURSE/Mobile Application Development/HW07/HW07_group18/HW07_group18/app/src/main/res/layout/forum_list_item.xml" value="0.25416666666666665" />
+        <entry key="..\:/UNCC/COURSE/Mobile Application Development/HW07/HW07_group18/HW07_group18/app/src/main/res/layout/fragment_create_forum.xml" value="0.25416666666666665" />
         <entry key="..\:/UNCC/COURSE/Mobile Application Development/HW07/HW07_group18/HW07_group18/app/src/main/res/layout/fragment_history.xml" value="0.264" />
+        <entry key="..\:/UNCC/COURSE/Mobile Application Development/HW07/HW07_group18/HW07_group18/app/src/main/res/layout/fragment_login.xml" value="0.25416666666666665" />
+        <entry key="..\:/UNCC/COURSE/Mobile Application Development/HW07/HW07_group18/HW07_group18/app/src/main/res/layout/fragment_register.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>

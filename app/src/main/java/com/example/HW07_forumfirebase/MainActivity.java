@@ -1,4 +1,4 @@
-/*InClass 08
+/*HW07
         Grouping3 - 18
         Name: Rahul Govindkumar
         Name: Amruth Nag
@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.main_ContainerView, new LoginFragment())
                     .commit();
+
         } else {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.main_ContainerView, new HistoryFragment())

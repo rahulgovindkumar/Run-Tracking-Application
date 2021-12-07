@@ -1,3 +1,10 @@
+/*HW07
+        Grouping3 - 18
+        Name: Rahul Govindkumar
+        Name: Amruth Nag
+        */
+
+
 package com.example.HW07_forumfirebase;
 
 import androidx.annotation.NonNull;
@@ -308,4 +315,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        setTitle(getString(R.string.JogTracking));
+
+    }
+
 }
