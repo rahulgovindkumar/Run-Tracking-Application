@@ -64,17 +64,17 @@ public class HistoryFragment extends Fragment {
 
         String uid = mAuth.getCurrentUser().getUid();
 
-        db.collection(uid).get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        previousJogs.clear();
-                        for (QueryDocumentSnapshot doc: queryDocumentSnapshots) {
-                            previousJogs.add(new POJOclasses.Route((ArrayList<GeoPoint>) doc.get("points"), doc.getId()));
-                        }
-                        adapter.notifyDataSetChanged();
-                    }
-                });
+
+        db.collection(uid).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                previousJogs.clear();
+                for (QueryDocumentSnapshot doc: value) {
+                    previousJogs.add(new POJOclasses.Route((ArrayList<GeoPoint>) doc.get("points"), doc.getId()));
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
 
         binding.buttonNewJog.setOnClickListener(new View.OnClickListener() {
             @Override

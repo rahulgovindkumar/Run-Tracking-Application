@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -39,18 +40,25 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-    ArrayList<ParcelableGeoPoint> trip, newRun;
+    ArrayList<ParcelableGeoPoint> trip;
+    ArrayList<GeoPoint> newRun;
     double newRunLatMin, newRunLatMax, newRunLonMin, newRunLonMax;
     LatLng prev;
-
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     final String TAG = "Demo";
 
@@ -71,6 +79,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     newRunLatMin = newRunLatMax = location.getLatitude();
                     newRunLonMin = newRunLonMax = location.getLongitude();
                     prev = new LatLng(location.getLatitude(), location.getLongitude());
+                    mMap.addMarker(new MarkerOptions().position(prev).title("Start"));
                 } else {
                     newRunLatMin = location.getLatitude() < newRunLatMin ? location.getLatitude() : newRunLatMin;
                     newRunLonMin = location.getLongitude() < newRunLonMin ? location.getLongitude() : newRunLonMin;
@@ -83,23 +92,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .add(prev, current).width(6).color(Color.BLUE)
                             .visible(true));
                     prev=current;
-                    newRun.add(new ParcelableGeoPoint(new GeoPoint(location.getLatitude(), location.getLongitude())));
+                    newRun.add(new GeoPoint(location.getLatitude(), location.getLongitude()));
                 }
-                Log.d(TAG, "onLocationResult: "+ location.toString());
-                Log.d(TAG, "onLocationResult:getLongitude "+ location.getLongitude());
-                Log.d(TAG, "onLocationResult:getLatitude "+ location.getLatitude());
             }
-
-//            LatLngBounds latLngBounds = new LatLngBounds(
-//                    new LatLng(newRunLatMin, newRunLonMin), // SW bounds
-//                    new LatLng(newRunLatMax, newRunLonMax)  // NE bounds
-//            );
-//
-//            mMap.setLatLngBoundsForCameraTarget(latLngBounds);
-//            int width = getResources().getDisplayMetrics().widthPixels;
-//            int height = getResources().getDisplayMetrics().heightPixels;
-//            int padding = (int) (width * 0.10);
-//            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, width, height, padding));
         }
     };
 
@@ -128,6 +123,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationRequest.setInterval(4000);
         locationRequest.setFastestInterval(2000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        binding.buttonEndJog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String uid = mAuth.getCurrentUser().getUid();
+
+                HashMap<String, Object> newRunData = new HashMap<>();
+                newRunData.put("points", newRun);
+
+                db.collection(uid).document(String.valueOf(java.util.Calendar.getInstance().getTime()))
+                        .set(newRunData, SetOptions.merge());
+                finish();
+            }
+        });
     }
 
     @Override
@@ -250,7 +259,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.d(TAG, "onSuccess: "+location.toString());
                     Log.d(TAG, "onSuccess: "+location.getLatitude());
                     Log.d(TAG, "onSuccess: "+location.getLongitude());
-                    newRun.add(new ParcelableGeoPoint(new GeoPoint(location.getLatitude(), location.getLongitude())));
+                    newRun.add(new GeoPoint(location.getLatitude(), location.getLongitude()));
                 }else
                 {
                     Log.d(TAG, "onSuccess: Location is NULL ");
