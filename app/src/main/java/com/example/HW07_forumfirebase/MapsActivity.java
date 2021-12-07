@@ -75,7 +75,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             Log.d(TAG, "onLocationResult: Before");
             for(Location location: locationResult.getLocations()){
-                if(newRunLatMin == 0) {
+                if(newRun.size() == 0) {
                     newRunLatMin = newRunLatMax = location.getLatitude();
                     newRunLonMin = newRunLonMax = location.getLongitude();
                     prev = new LatLng(location.getLatitude(), location.getLongitude());
@@ -92,8 +92,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             .add(prev, current).width(6).color(Color.BLUE)
                             .visible(true));
                     prev=current;
-                    newRun.add(new GeoPoint(location.getLatitude(), location.getLongitude()));
                 }
+                newRun.add(new GeoPoint(location.getLatitude(), location.getLongitude()));
             }
         }
     };
