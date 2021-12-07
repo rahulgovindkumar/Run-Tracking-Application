@@ -54,7 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
     ArrayList<ParcelableGeoPoint> trip;
-    ArrayList<GeoPoint> newRun;
+    ArrayList<GeoPoint> newRun = new ArrayList<>();
     double newRunLatMin, newRunLatMax, newRunLonMin, newRunLonMax;
     LatLng prev;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
