@@ -70,7 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
-            if(locationResult==null){
+            if(locationResult==null || trip != null){
                 return;
             }
             Log.d(TAG, "onLocationResult: Before");
